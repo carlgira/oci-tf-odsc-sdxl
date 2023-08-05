@@ -36,3 +36,4 @@ terraform.rc
 
 **/.venv
 **/.ipynb_checkpoints
+LOCAL.md
