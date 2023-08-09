@@ -26,7 +26,7 @@ resource "oci_logging_log" "log" {
 resource "oci_identity_dynamic_group" "dynamic_group" {
     compartment_id = var.tenancy_ocid
     description = "Dynamic group for instances in datascience project"
-    matching_rule = "ALL {resource.type='datasciencenotebooksession', resource.compartment.id='${var.compartment_ocid}'}"
+    matching_rule = "ANY {ALL {resource.type='datasciencenotebooksession', resource.compartment.id='${var.compartment_ocid}'}, ALL {resource.type='datasciencemodeldeployment', resource.compartment.id='${var.compartment_ocid}'}, ALL {resource.type='datasciencejobrun', resource.compartment.id='${var.compartment_ocid}'}} "
     name = "${var.instance_name}-dynamic_group"
 }
 
@@ -39,7 +39,7 @@ resource "oci_identity_policy" "policy" {
                   "allow dynamic-group ${var.instance_name}-dynamic_group to manage data-science-family in compartment ${data.oci_identity_compartment.compartment.name}",
                   "allow dynamic-group ${var.instance_name}-dynamic_group to use log-content in compartment ${data.oci_identity_compartment.compartment.name}",
                   "allow dynamic-group ${var.instance_name}-dynamic_group to use log-groups in compartment ${data.oci_identity_compartment.compartment.name}",
-                  
+                  "allow dynamic-group ${var.instance_name}-dynamic_group to manage objects in compartment ${data.oci_identity_compartment.compartment.name} where all {target.bucket.name='${oci_objectstorage_bucket.bucket.name}'}"
             ]
 }
 

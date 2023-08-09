@@ -16,6 +16,8 @@ print("Full input folder used is " + full_input_folder)
 ###############################
 
 ##kohya_ss stored in Job Artifacts
+os.system("cd kohya_ss && bash setup.sh")
+os.system("pip uninstall --yes opencv-python && pip install opencv-python-headless")
 
 ## get model weights
 os.system("mkdir -p stable-diffusion-xl-base-1.0 && wget -O stable-diffusion-xl-base-1.0/sd_xl_base_1.0.safetensors https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/resolve/main/sd_xl_base_1.0.safetensors")
@@ -60,6 +62,7 @@ print(glob.glob(profile_image_loc))
 ############################### Stable Diffusion
 ###############################
 
+os.system("accelerate config default")
 os.system("accelerate launch  kohya_ss/sdxl_train_network.py \
   --enable_bucket \
   --min_bucket_reso=256 \
@@ -79,7 +82,7 @@ os.system("accelerate launch  kohya_ss/sdxl_train_network.py \
   --no_half_vae --learning_rate='0.0004' \
   --lr_scheduler='cosine' \
   --train_batch_size='1' \
-  --max_train_steps='1200' \
+  --max_train_steps='20' \
   --mixed_precision='fp16' \
   --save_precision='fp16' \
   --optimizer_type='adafactor' \
