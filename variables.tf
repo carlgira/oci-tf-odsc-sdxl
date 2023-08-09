@@ -1,3 +1,7 @@
+variable "tenancy_ocid" {
+  description = ""
+}
+
 variable "compartment_ocid" {
   description = ""
 }

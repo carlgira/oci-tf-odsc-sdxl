@@ -12,11 +12,35 @@ resource "oci_objectstorage_bucket" "bucket" {
     namespace = data.oci_objectstorage_namespace.tenant_namespace.namespace
 }
 
+resource "oci_logging_log_group" "log_group" {
+    compartment_id = var.compartment_ocid
+    display_name = "${var.instance_name}-loggroup"
+}
+
+resource "oci_logging_log" "log" {
+    display_name = "${var.instance_name}-log"
+    log_group_id = oci_logging_log_group.log_group.id
+    log_type = "CUSTOM"
+}
+
+resource "oci_identity_dynamic_group" "dynamic_group" {
+    compartment_id = var.tenancy_ocid
+    description = "Dynamic group for instances in datascience project"
+    matching_rule = "ALL {resource.type='datasciencenotebooksession', resource.compartment.id='${var.compartment_ocid}'}"
+    name = "${var.instance_name}-dynamic_group"
+}
+
 resource "oci_identity_policy" "policy" {
+    depends_on = [ oci_identity_dynamic_group.dynamic_group ]
     compartment_id = var.compartment_ocid
     description = "${var.instance_name}-policy"
     name = "${var.instance_name}-policy"
-    statements = ["Allow service datascience to manage object-family in compartment ${data.oci_identity_compartment.compartment.name} where ALL {target.bucket.name='${oci_objectstorage_bucket.bucket.name}'}"]
+    statements = ["allow service datascience to manage object-family in compartment ${data.oci_identity_compartment.compartment.name} where ALL {target.bucket.name='${oci_objectstorage_bucket.bucket.name}'}",
+                  "allow dynamic-group ${var.instance_name}-dynamic_group to manage data-science-family in compartment ${data.oci_identity_compartment.compartment.name}",
+                  "allow dynamic-group ${var.instance_name}-dynamic_group to use log-content in compartment ${data.oci_identity_compartment.compartment.name}",
+                  "allow dynamic-group ${var.instance_name}-dynamic_group to use log-groups in compartment ${data.oci_identity_compartment.compartment.name}",
+                  
+            ]
 }
 
 resource "oci_datascience_notebook_session" "notebook_session" {
@@ -29,8 +53,11 @@ resource "oci_datascience_notebook_session" "notebook_session" {
         shape = var.instance_shape
         block_storage_size_in_gbs = var.compute_block_storage
     }
+
     
+       
     notebook_session_runtime_config_details {
+        custom_environment_variables = {"loggroup_ocid" : oci_logging_log_group.log_group.id, "log_ocid": oci_logging_log.log.id, "bucket_name":  oci_objectstorage_bucket.bucket.name}
         notebook_session_git_config_details {
             notebook_session_git_repo_config_collection {
                 url = var.github_repo
