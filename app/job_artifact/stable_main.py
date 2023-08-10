@@ -16,6 +16,7 @@ print("Full input folder used is " + full_input_folder)
 ###############################
 
 ##kohya_ss stored in Job Artifacts
+os.system("sudo yum install gcc-4.8")
 os.system("cd kohya_ss && bash setup.sh")
 os.system("pip uninstall --yes opencv-python && pip install opencv-python-headless")
 
