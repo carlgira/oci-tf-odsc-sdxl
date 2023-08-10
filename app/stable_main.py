@@ -18,7 +18,7 @@ print("Full input folder used is " + full_input_folder)
 ##kohya_ss stored in Job Artifacts
 os.system("sudo yum install gcc-4.8")
 os.system("cd kohya_ss && bash setup.sh")
-os.system("pip uninstall --yes opencv-python && pip install opencv-python-headless")
+#os.system("pip uninstall --yes opencv-python && pip install opencv-python-headless")
 
 ## get model weights
 os.system("mkdir -p stable-diffusion-xl-base-1.0 && wget -O stable-diffusion-xl-base-1.0/sd_xl_base_1.0.safetensors https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/resolve/main/sd_xl_base_1.0.safetensors")
