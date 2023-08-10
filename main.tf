@@ -12,6 +12,21 @@ resource "oci_objectstorage_bucket" "bucket" {
     namespace = data.oci_objectstorage_namespace.tenant_namespace.namespace
 }
 
+
+resource "oci_objectstorage_object" "input_folder" {
+    bucket = oci_objectstorage_bucket.bucket.name
+    content = ""
+    namespace = data.oci_objectstorage_namespace.tenant_namespace.namespace
+    object = "sdxl/input/upload_here_your_images.md"
+}
+
+resource "oci_objectstorage_object" "output_folder" {
+    bucket = oci_objectstorage_bucket.bucket.name
+    content = ""
+    namespace = data.oci_objectstorage_namespace.tenant_namespace.namespace
+    object = "sdxl/output/output_files_here.md"
+}
+
 resource "oci_logging_log_group" "log_group" {
     compartment_id = var.compartment_ocid
     display_name = "${var.instance_name}-loggroup"
@@ -52,9 +67,12 @@ resource "oci_datascience_notebook_session" "notebook_session" {
     notebook_session_config_details {
         shape = var.instance_shape
         block_storage_size_in_gbs = var.compute_block_storage
-    }
 
-    
+        notebook_session_shape_config_details {
+            memory_in_gbs = 16
+            ocpus = 2
+        }
+    }
        
     notebook_session_runtime_config_details {
         custom_environment_variables = {"loggroup_ocid" : oci_logging_log_group.log_group.id, "log_ocid": oci_logging_log.log.id, "bucket_name":  oci_objectstorage_bucket.bucket.name}
