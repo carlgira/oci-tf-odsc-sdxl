@@ -10,15 +10,18 @@ full_input_folder = os.environ.get("full_input_folder", "no_input_folder")  #def
 
 print("Full input folder used is " + full_input_folder)
 
-
 ###############################
 ############################### directories etc
 ###############################
 
-##kohya_ss stored in Job Artifacts
-os.system("sudo yum install gcc-4.8")
+## kohya_ss stored in Job Artifacts
 os.system("cd kohya_ss && bash setup.sh")
-#os.system("pip uninstall --yes opencv-python && pip install opencv-python-headless")
+os.system("pip uninstall --yes opencv-python && pip install opencv-python-headless")
+
+# Avoid collision with conda libraries
+os.system("sudo rm -f /usr/lib64/libstdc++.so.6.0.19")
+os.system("sudo rm -f /usr/lib64/libstdc++.so.6")
+
 
 ## get model weights
 os.system("mkdir -p stable-diffusion-xl-base-1.0 && wget -O stable-diffusion-xl-base-1.0/sd_xl_base_1.0.safetensors https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/resolve/main/sd_xl_base_1.0.safetensors")
@@ -40,7 +43,7 @@ os.system("mkdir -p output")  #same as in sdxl_minimal_inference.py
 ###############################
 
    
-profile_image_loc = "./sks/img/1_sks person"
+profile_image_loc = "./sks/img/1_sks person/"
 print("Local folder for iamges is " + profile_image_loc)
         
 #get the image from the bucket and store locally
@@ -83,7 +86,7 @@ os.system("accelerate launch  kohya_ss/sdxl_train_network.py \
   --no_half_vae --learning_rate='0.0004' \
   --lr_scheduler='cosine' \
   --train_batch_size='1' \
-  --max_train_steps='20' \
+  --max_train_steps='1200' \
   --mixed_precision='fp16' \
   --save_precision='fp16' \
   --optimizer_type='adafactor' \
@@ -102,7 +105,7 @@ print("----------------------- Training done")
 ############################### Generate image
 ###############################
 
-os.system("python kohya_ss/sdxl_minimal_inference.py --ckpt_path stable-diffusion-xl-base-1.0/sd_xl_base_1.0.safetensors --output_dir=output --lora_weights sks/output/sks.safetensors --prompt 'ultra realistic illustration, ((sks man)) in a red bull racing formula 1 suit intricate, elegant, no helmet, headphones, highly detailed, digital painting, artstation, concept art, smooth, sharp focus, illustration, art by artgerm and greg rutkowski and alphonse mucha'")
+os.system("python kohya_ss/sdxl_minimal_inference.py --ckpt_path stable-diffusion-xl-base-1.0/sd_xl_base_1.0.safetensors --output_dir=output --lora_weights sks/output/sks.safetensors --prompt 'ultra realistic illustration, ((sks)) in a red bull racing formula 1 suit intricate, elegant, no helmet, headphones, highly detailed, digital painting, artstation, concept art, smooth, sharp focus, illustration, art by artgerm and greg rutkowski and alphonse mucha'")
 
 os.system("mv sks/output/sks.safetensors output")
 
