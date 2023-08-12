@@ -140,11 +140,11 @@ def generate_image(prompt, negative_prompt="", seed=None):
     req =  request.Request("http://127.0.0.1:8188/prompt", data=data)
     request.urlopen(req)
     
-    image_file = wait_for_new_png('output/')
+    image_file = wait_for_new_png('ComfyUI/output/')
     
     if image_file is None:
         return image_file
     
-    im = Image.open(image_file) 
+    im = Image.open(image_file)
     
-    return image_file, im
+    return im
