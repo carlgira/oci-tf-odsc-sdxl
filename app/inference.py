@@ -1,13 +1,11 @@
 import json
 import os
-from functools import lru_cache
 import json
 from urllib import request
 import random
 import os
 import time
 from PIL import Image
-from subprocess import Popen
 
 prompt_text = """
 {
@@ -150,23 +148,3 @@ def generate_image(prompt, negative_prompt="", seed=None):
     im = Image.open(image_file) 
     
     return image_file, im
-
-model_name = "sks.safetensors"
-
-@lru_cache(maxsize=10)
-def load_model(model_file_name=model_name):
-    
-    os.system("pwd")
-    os.system("ls ", model_name)
-    
-    os.system("pip install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/rocm5.4.2")
-    os.system("pip install -r requirements.txt")
-    os.system("wget https://huggingface.co/stabilityai/stable-diffusion-xl-base-1.0/resolve/main/sd_xl_base_1.0.safetensors")
-    
-    p = Popen(['python', 'main.py'])
-    
-
-def predict(data, model=load_model()):
-    print(data)
-    file_name, img = generate_image("portrait of sks, pencil")
-    return {"pred": file_name}
