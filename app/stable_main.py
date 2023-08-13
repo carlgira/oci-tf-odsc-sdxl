@@ -16,7 +16,7 @@ print("Full input folder used is " + full_input_folder)
 
 ## kohya_ss stored in Job Artifacts
 os.system("cd kohya_ss && bash setup.sh")
-#os.system("pip uninstall --yes opencv-python && pip install opencv-python-headless")
+os.system("pip uninstall --yes opencv-python && pip install opencv-python-headless")
 
 # Avoid collision with conda libraries
 os.system("sudo rm -f /usr/lib64/libstdc++.so.6.0.19")
