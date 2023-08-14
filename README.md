@@ -33,15 +33,6 @@ See the next video with all the steps.
     export TF_VAR_region='<oci-region>'
 ```
 
-4. If you're using a Linux OS, you may need to execute the following command to obtain execution permissions on the shell script:
-```bash
-    chmod a+x generate-keys.sh
-```
-5. Execute the script generate-keys.sh to generate private key to access the instance. 
-```bash
-    sh generate-keys.sh
-```
-
 ## Build
 
 To build the terraform solution, simply execute: 
